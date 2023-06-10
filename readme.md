@@ -59,4 +59,4 @@ python finder.py functions_list_A.txt functions_list_B.txt
 Retrieves data from the LOLDrivers API, saves it to the "drivers.json" file, and saves the API headers to the "headers.json" file. It also processes the data using function lists provided in the "functions_list_A.txt" and "functions_list_B.txt" files.
 
 ---
-Thanks to @OMGhozlan for this contribution on the code refactoring ! 
+Thanks to [@OMGhozlan](https://github.com/OMGhozlan) for his contribution on the code refactoring ! 
