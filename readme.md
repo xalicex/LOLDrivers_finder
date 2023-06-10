@@ -51,7 +51,7 @@ Setting a specific URL where to download the driver.json file:
 python finder.py  --api-url https://www.loldrivers.io/api/drivers.json
 ```
 
-Setting a specific list of function (be sure to understand in the code how this function will be processed and searched):
+Setting specifics lists of functions (be sure to understand in the code how this function will be processed and searched !!!):
 ```bash
 python finder.py functions_list_A.txt functions_list_B.txt
 ```
