@@ -90,13 +90,11 @@ def process_data(drivers_data, functions_list=None, desired_keys=['filename', 'm
 			):
 				driver_id = driver.get("Id")
 				if driver_id not in processed_data:
-					processed_data[driver_id] = {
-						"Filename": [],
-						"MD5": [],
-					}
-				for key in processed_data[driver_id]:
-					if key.lower() in desired_keys:
-						processed_data[driver_id][key].append(sample.get(key))
+					processed_data[driver_id] = {dk : [] for dk in desired_keys}
+				for key in sample:
+					lowered_key = key.lower()
+					if lowered_key in desired_keys:
+						processed_data[driver_id][lowered_key].append(sample.get(key))
 	
 	print(json.dumps(processed_data, indent=4))
 	return processed_data

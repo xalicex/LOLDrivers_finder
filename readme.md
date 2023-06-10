@@ -32,6 +32,7 @@ Process the drivers' data based on the provided functions list.
 
 - `drivers_data`: List of drivers' data obtained from the API.
 - `functions_list`: List of function lists used for processing. If not provided or empty, default lists will be used.
+- `desired_keys`: List of keys used for search. If not provided or empty, default 'filename' and 'md5' will be used.
 
 ### `main(api_url, file_name, headers_file, file_paths)`
 Main function to retrieve and process data from the LOLDrivers API.
