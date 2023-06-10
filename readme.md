@@ -10,22 +10,18 @@ This code retrieves and processes data from the LOLDrivers API. It allows you to
 ## Usage
 
 ```bash
-python finder.py [--api-url API_URL] [--file-name FILE_NAME] [--headers-file HEADERS_FILE] [file_paths [file_paths ...]]
+python finder.py [--api-url API_URL] [file_paths [file_paths ...]]
 ```
 
 - `--api-url`: URL of the API to retrieve data from (default: "https://www.loldrivers.io/api/drivers.json").
-- `--file-name`: Name of the file to save the retrieved data (default: "drivers.json").
-- `--headers-file`: Name of the file to save the API headers (default: "headers.json").
 - `file_paths`: Paths to files containing lists of functions. If no file paths are provided, default lists of terminate functions and open functions will be used.
 
 ## Main functions
 
-### `check_data_changed(api_url, file_name, headers_file)`
+### `check_data_changed(api_url)`
 Check if the API data has changed since the last retrieval. If the data file is not present or the content has changed, download the file.
 
 - `api_url`: URL of the API to retrieve data from.
-- `file_name`: Name of the file to save the retrieved data.
-- `headers_file`: Name of the file to save the API headers.
 
 ### `process_data(drivers_data, functions_list=None)`
 Process the drivers' data based on the provided functions list.
@@ -34,18 +30,30 @@ Process the drivers' data based on the provided functions list.
 - `functions_list`: List of function lists used for processing. If not provided or empty, default lists will be used.
 - `desired_keys`: List of keys used for search. If not provided or empty, default 'filename' and 'md5' will be used.
 
-### `main(api_url, file_name, headers_file, file_paths)`
+### `main(api_url, file_paths)`
 Main function to retrieve and process data from the LOLDrivers API.
 
 - `api_url`: URL of the API to retrieve data from.
-- `file_name`: Name of the file to save the retrieved data.
-- `headers_file`: Name of the file to save the API headers.
 - `file_paths`: Paths to files containing lists of functions.
 
 ## Example usage:
 
+Basic usage:
+
 ```bash
-python finder.py --file-name drivers.json --headers-file headers.json terminate_functions.txt open_functions.txt
+python finder.py
 ```
 
-Retrieves data from the LOLDrivers API, saves it to the "drivers.json" file, and saves the API headers to the "headers.json" file. It also processes the data using function lists provided in the "terminate_functions.txt" and "open_functions.txt" files.
+Setting a specific URL where to download the driver.json file:
+
+
+```bash
+python finder.py  --api-url https://www.loldrivers.io/api/drivers.json
+```
+
+Setting a specific list of function (be sure to understand in the code how this function will be processed and searched):
+```bash
+python finder.py functions_list_A.txt functions_list_B.txt
+```
+
+Retrieves data from the LOLDrivers API, saves it to the "drivers.json" file, and saves the API headers to the "headers.json" file. It also processes the data using function lists provided in the "functions_list_A.txt" and "functions_list_B.txt" files.
