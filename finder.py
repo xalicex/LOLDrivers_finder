@@ -3,13 +3,14 @@ import json
 import logging
 import os
 from datetime import datetime
-from requests import head, get
+from requests import head, get, ConnectionError, Timeout
 
 API_URL = "https://www.loldrivers.io/api/drivers.json"
 FILE_NAME = "drivers.json"
 HEADERS_FILE = "headers.json"
 TERMINATE_FUNCTIONS = ["ZwTerminateProcess", "NtTerminateProcess"]
 OPEN_FUNCTIONS = ["ZwOpenProcess", "NtOpenProcess"]
+TIMEOUT = 5
 
 
 def load_json(file_path):
@@ -40,16 +41,24 @@ def save_json(data, file_path):
 		return False
 
 
-def check_data_changed(api_url, file_name, headers_file):
+def check_data_changed(api_url):
 	"""
 	Check if the API data has changed since the last retrieval.
 	If the data file is not present or the content has changed, download the file.
 	"""
-	saved_headers = load_json(headers_file)
+	saved_headers = load_json(HEADERS_FILE)
 	if saved_headers == -1:
 		logging.info(f"Headers file not found. Redownloading.")
 
-	response = head(api_url)
+	
+
+	try:
+		response = head(api_url, timeout=TIMEOUT)
+	except (ConnectionError, Timeout) as exception:
+		logging.error(f"Connection error. No internet connection?")
+		logging.info(f"Using local version of drivers.json")
+		return False
+	
 	current_headers = {
 		"ETag": response.headers.get("ETag"),
 		"Last-Modified": response.headers.get("Last-Modified"),
@@ -63,8 +72,8 @@ def check_data_changed(api_url, file_name, headers_file):
 		response = get(api_url)
 		response.raise_for_status()
 		data = response.json()
-		save_json(data, file_name)
-		save_json(current_headers, headers_file)
+		save_json(data, FILE_NAME)
+		save_json(current_headers, HEADERS_FILE)
 		return True
 	except Exception as e:
 		logging.error(f"Failed to download data from '{api_url}': {e}")
@@ -100,26 +109,26 @@ def process_data(drivers_data, functions_list=None, desired_keys=['filename', 'm
 	return processed_data
 
 
-def main(api_url, file_name, headers_file, file_paths):
+def main(api_url, file_paths):
 	"""
 	Main function to retrieve and process data from LOLDrivers API.
 	"""
 	logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-	check_data_changed(api_url, file_name, headers_file)
+	check_data_changed(api_url)
 
 
 	try:
-		drivers_data = load_json(file_name)
+		drivers_data = load_json(FILE_NAME)
 		processed_data = process_data(drivers_data, file_paths)
 		if processed_data:
-			output_file = os.path.splitext(file_name)[0] + "_processed.json"
+			output_file = os.path.splitext(FILE_NAME)[0] + "_processed.json"
 			if save_json(processed_data, output_file):
 				logging.info(f"Processed data saved to '{output_file}'.")
 			else:
 				logging.error("Failed to save processed data.")
 	except json.JSONDecodeError as e:
-		logging.error(f"Failed to decode JSON data from '{file_name}': {e}")
+		logging.error(f"Failed to decode JSON data from '{FILE_NAME}': {e}")
 
 
 if __name__ == "__main__":
@@ -134,18 +143,6 @@ if __name__ == "__main__":
 		help="URL of the API to retrieve data from",
 	)
 	parser.add_argument(
-		"--file-name",
-		type=str,
-		default=FILE_NAME,
-		help="Name of the file to save the retrieved data",
-	)
-	parser.add_argument(
-		"--headers-file",
-		type=str,
-		default=HEADERS_FILE,
-		help="Name of the file to save the API headers",
-	)
-	parser.add_argument(
 		"file_paths",
 		type=str,
 		nargs="*",
@@ -155,4 +152,4 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# Run the main function
-	main(args.api_url, args.file_name, args.headers_file, args.file_paths)
+	main(args.api_url, args.file_paths)
