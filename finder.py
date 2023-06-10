@@ -20,10 +20,10 @@ def load_json(file_path):
 		with open(file_path, "r", encoding="utf-8") as file:
 			return json.load(file)
 	except FileNotFoundError:
-		return None
+		return -1
 	except json.JSONDecodeError as e:
 		logging.error(f"Failed to decode JSON data from '{file_path}': {e}")
-		return None
+		return -2
 
 
 def save_json(data, file_path):
@@ -46,8 +46,8 @@ def check_data_changed(api_url, file_name, headers_file):
 	If the data file is not present or the content has changed, download the file.
 	"""
 	saved_headers = load_json(headers_file)
-	if saved_headers is None:
-		return True
+	if saved_headers == -1:
+		logging.info(f"Headers file not found. Redownloading.")
 
 	response = head(api_url)
 	current_headers = {
@@ -62,7 +62,7 @@ def check_data_changed(api_url, file_name, headers_file):
 	try:
 		response = get(api_url)
 		response.raise_for_status()
-		data = response.text
+		data = response.json()
 		save_json(data, file_name)
 		save_json(current_headers, headers_file)
 		return True
@@ -72,13 +72,14 @@ def check_data_changed(api_url, file_name, headers_file):
 
 
 
-def process_data(drivers_data, functions_list=None):
+def process_data(drivers_data, functions_list=None, desired_keys=['filename', 'md5']):
 	"""
 	Process the drivers' data based on the provided functions list.
 	"""
 	if functions_list is None or len(functions_list) < 2:
 		functions_list = [TERMINATE_FUNCTIONS, OPEN_FUNCTIONS]
 
+	# driver_details = {k.lower() for k in dri
 	processed_data = {}
 	for driver in drivers_data:
 		for sample in driver.get("KnownVulnerableSamples", []):
@@ -93,8 +94,9 @@ def process_data(drivers_data, functions_list=None):
 						"Filename": [],
 						"MD5": [],
 					}
-				processed_data[driver_id]["Filename"].append(sample.get("Filename"))
-				processed_data[driver_id]["MD5"].append(sample.get("MD5"))
+				for key in processed_data[driver_id]:
+					if key.lower() in desired_keys:
+						processed_data[driver_id][key].append(sample.get(key))
 	
 	print(json.dumps(processed_data, indent=4))
 	return processed_data
