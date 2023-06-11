@@ -10,9 +10,12 @@ Which means only drivers importing one of the `*OpenProcess` AND one of the `*Te
 
 All the drivers retrieved by the script are POTENTIAL process killer drivers. It means that some of them aren't.
 
-Of course, function can be imported dynamically, processes can be terminated other ways and handle retrieved without using `Nt/ZwOpenProcess`. This script is not bullet proof. It's just a quick and dirty way to find easy targets.
+Of course, function can be imported dynamically, processes can be terminated other ways and handle retrieved without using `Nt/ZwOpenProcess`. 
 
-When executed, this code will check if a new version of `drivers.json` is available on LOLDrivers and download it.
+This script is not bullet proof. It's just a quick and dirty way to find easy targets, so it's 100% sure that it will miss some real process drivers killer drivers available on LOLDrivers.
+
+However, in the list of drivers retrieved by the script today, some of them are indeed process killer drivers. So have fun !
+
 
 
 
@@ -22,6 +25,10 @@ When executed, this code will check if a new version of `drivers.json` is availa
 - Required packages: argparse, json, logging, os, datetime, requests
 
 ## Usage
+
+
+
+
 
 ```bash
 python finder.py [--api-url API_URL] [file_paths [file_paths ...]]
