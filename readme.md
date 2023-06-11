@@ -1,6 +1,20 @@
-# Code Documentation
+# Process killer drivers finder
 
-This code retrieves and processes data from the LOLDrivers API. It allows you to specify the API URL, the file name to save the retrieved data, the headers file to store the API headers, and additional file paths containing lists of functions.
+The purpose of this project is to retrieve potential process killer drivers. 
+
+It uses the `imported functions` attribute of the `drivers.json` file available on the [LOLDrivers project](https://www.loldrivers.io).
+
+To do so, the code will select all drivers importing the `Nt/ZwOpenProcess` AND `Nt/ZwTerminateProcess`.
+
+Which means only drivers importing one of the `*OpenProcess` AND one of the `*TerminatedProcess` functions will be retrieved.
+
+All the drivers retrieved by the script are POTENTIAL process killer drivers. It means that some of them aren't.
+
+Of course, function can be imported dynamically, processes can be terminated other ways and handle retrieved without using `Nt/ZwOpenProcess`. This script is not bullet proof. It's just a quick and dirty way to find easy targets.
+
+When executed, this code will check if a new version of `drivers.json` is available on LOLDrivers and download it.
+
+
 
 ## Prerequisites
 
@@ -13,7 +27,7 @@ This code retrieves and processes data from the LOLDrivers API. It allows you to
 python finder.py [--api-url API_URL] [file_paths [file_paths ...]]
 ```
 
-- `--api-url`: URL of the API to retrieve data from (default: "https://www.loldrivers.io/api/drivers.json").
+- `--api-url`: URL of the API to lretrieve data from (default: "https://www.loldrivers.io/api/drivers.json").
 - `file_paths`: Paths to files containing lists of functions. If no file paths are provided, default lists of terminate functions and open functions will be used.
 
 ## Main functions
