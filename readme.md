@@ -65,5 +65,6 @@ python finder.py  --api-url https://www.loldrivers.io/api/drivers.json
 ```
 
 Retrieves data from the LOLDrivers API, saves it to the "drivers.json" file, and saves the API headers to the "headers.json" file. 
+
 ---
 Thanks to [@OMGhozlan](https://github.com/OMGhozlan) for his contribution on the code refactoring ! 
