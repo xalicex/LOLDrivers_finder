@@ -81,14 +81,9 @@ def check_data_changed(api_url):
 
 
 
-def process_data(drivers_data, functions_list=None, desired_keys=['filename', 'md5']):
-	"""
-	Process the drivers' data based on the provided functions list.
-	"""
-	if functions_list is None or len(functions_list) < 2:
-		functions_list = [TERMINATE_FUNCTIONS, OPEN_FUNCTIONS]
+def process_data(drivers_data, desired_keys=['filename', 'md5']):
 
-	# driver_details = {k.lower() for k in dri
+	functions_list = [TERMINATE_FUNCTIONS, OPEN_FUNCTIONS]
 	processed_data = {}
 	for driver in drivers_data:
 		for sample in driver.get("KnownVulnerableSamples", []):
@@ -109,7 +104,7 @@ def process_data(drivers_data, functions_list=None, desired_keys=['filename', 'm
 	return processed_data
 
 
-def main(api_url, file_paths):
+def main(api_url):
 	"""
 	Main function to retrieve and process data from LOLDrivers API.
 	"""
@@ -120,7 +115,7 @@ def main(api_url, file_paths):
 
 	try:
 		drivers_data = load_json(FILE_NAME)
-		processed_data = process_data(drivers_data, file_paths)
+		processed_data = process_data(drivers_data)
 		if processed_data:
 			output_file = os.path.splitext(FILE_NAME)[0] + "_processed.json"
 			if save_json(processed_data, output_file):
@@ -142,14 +137,8 @@ if __name__ == "__main__":
 		default=API_URL,
 		help="URL of the API to retrieve data from",
 	)
-	parser.add_argument(
-		"file_paths",
-		type=str,
-		nargs="*",
-		help="Paths to files containing lists of functions",
-	)
 
 	args = parser.parse_args()
 
 	# Run the main function
-	main(args.api_url, args.file_paths)
+	main(args.api_url)
