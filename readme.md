@@ -1,6 +1,8 @@
 # Process killer drivers finder
 
-The purpose of this project is to retrieve potential process killer drivers. 
+This script is related to a blogpost explaining how to find, reverse and exploit process killer drivers : https://alice.climent-pommeret.red/posts/process-killer-driver/
+
+The purpose of this project is to retrieve potential process killer drivers.
 
 It uses the `imported functions` attribute of the `drivers.json` file available on the [LOLDrivers project](https://www.loldrivers.io).
 
